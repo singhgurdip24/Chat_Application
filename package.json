@@ -2,7 +2,7 @@
   "name": "cRk94uW",
   "dependencies": {
     "react": "16.0.0",
-    "react-dom": "16.0.0",
+    "react-dom": "16.0.1",
     "@pusher/chatkit": "0.7.12"
   },
   "devDependencies": {
