@@ -20,6 +20,7 @@ class App extends React.Component {
         this.sendMessage = this.sendMessage.bind(this)
         this.subscribeToRoom = this.subscribeToRoom.bind(this)
         this.getRooms = this.getRooms.bind(this)
+        this.createRoom = this.createRoom.bind(this)
     } 
     
     componentDidMount() {
@@ -79,7 +80,15 @@ class App extends React.Component {
             roomId: this.state.roomId
         })
     }
-    
+
+    createRoom(name){
+        this.currentUser.createRoom({
+            name
+        })
+        .then(room =>  this.subscribeToRoom(room.id))
+        .catch(err => console.log('error with createRoom: ', err))
+    }
+     
     render() {
         return (
             <div className="app">
@@ -89,7 +98,7 @@ class App extends React.Component {
                     rooms={[...this.state.joinableRooms, ...this.state.joinedRooms]} />
                 <MessageList messages={this.state.messages} />
                 <SendMessageForm sendMessage={this.sendMessage} />
-                <NewRoomForm />
+                <NewRoomForm createRoom={this.createRoom}/>
             </div>
         );
     }

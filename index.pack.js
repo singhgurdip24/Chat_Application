@@ -1079,6 +1079,7 @@ var App = function (_React$Component) {
         _this.sendMessage = _this.sendMessage.bind(_this);
         _this.subscribeToRoom = _this.subscribeToRoom.bind(_this);
         _this.getRooms = _this.getRooms.bind(_this);
+        _this.createRoom = _this.createRoom.bind(_this);
         return _this;
     }
 
@@ -1151,6 +1152,19 @@ var App = function (_React$Component) {
             });
         }
     }, {
+        key: 'createRoom',
+        value: function createRoom(name) {
+            var _this5 = this;
+
+            this.currentUser.createRoom({
+                name: name
+            }).then(function (room) {
+                return _this5.subscribeToRoom(room.id);
+            }).catch(function (err) {
+                return console.log('error with createRoom: ', err);
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
@@ -1162,7 +1176,7 @@ var App = function (_React$Component) {
                     rooms: [].concat(_toConsumableArray(this.state.joinableRooms), _toConsumableArray(this.state.joinedRooms)) }),
                 _react2.default.createElement(_MessageList2.default, { messages: this.state.messages }),
                 _react2.default.createElement(_SendMessageForm2.default, { sendMessage: this.sendMessage }),
-                _react2.default.createElement(_NewRoomForm2.default, null)
+                _react2.default.createElement(_NewRoomForm2.default, { createRoom: this.createRoom })
             );
         }
     }]);
@@ -1390,26 +1404,49 @@ var NewRoomForm = function (_React$Component) {
     function NewRoomForm() {
         _classCallCheck(this, NewRoomForm);
 
-        return _possibleConstructorReturn(this, (NewRoomForm.__proto__ || Object.getPrototypeOf(NewRoomForm)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (NewRoomForm.__proto__ || Object.getPrototypeOf(NewRoomForm)).call(this));
+
+        _this.state = {
+            roomName: ''
+        };
+        _this.handleChange = _this.handleChange.bind(_this);
+        _this.handleSubmit = _this.handleSubmit.bind(_this);
+        return _this;
     }
 
     _createClass(NewRoomForm, [{
-        key: "render",
+        key: 'handleChange',
+        value: function handleChange(e) {
+            this.setState({
+                roomName: e.target.value
+            });
+        }
+    }, {
+        key: 'handleSubmit',
+        value: function handleSubmit(e) {
+            e.preventDefault();
+            this.props.createRoom(this.state.roomName);
+            this.setState({ roomName: '' });
+        }
+    }, {
+        key: 'render',
         value: function render() {
             return _react2.default.createElement(
-                "div",
-                { className: "new-room-form" },
+                'div',
+                { className: 'new-room-form' },
                 _react2.default.createElement(
-                    "form",
-                    null,
-                    _react2.default.createElement("input", {
-                        type: "text",
-                        placeholder: "NewRoomForm",
+                    'form',
+                    { onSubmit: this.handleSubmit },
+                    _react2.default.createElement('input', {
+                        value: this.state.roomName,
+                        onChange: this.handleChange,
+                        type: 'text',
+                        placeholder: 'NewRoomForm',
                         required: true }),
                     _react2.default.createElement(
-                        "button",
-                        { id: "create-room-btn", type: "submit" },
-                        "+"
+                        'button',
+                        { id: 'create-room-btn', type: 'submit' },
+                        '+'
                     )
                 )
             );
