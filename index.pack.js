@@ -1174,8 +1174,12 @@ var App = function (_React$Component) {
                     roomId: this.state.roomId,
                     subscribeToRoom: this.subscribeToRoom,
                     rooms: [].concat(_toConsumableArray(this.state.joinableRooms), _toConsumableArray(this.state.joinedRooms)) }),
-                _react2.default.createElement(_MessageList2.default, { messages: this.state.messages }),
-                _react2.default.createElement(_SendMessageForm2.default, { sendMessage: this.sendMessage }),
+                _react2.default.createElement(_MessageList2.default, {
+                    roomId: this.state.roomId,
+                    messages: this.state.messages }),
+                _react2.default.createElement(_SendMessageForm2.default, {
+                    disabled: !this.state.roomId,
+                    sendMessage: this.sendMessage }),
                 _react2.default.createElement(_NewRoomForm2.default, { createRoom: this.createRoom })
             );
         }
@@ -1358,6 +1362,17 @@ var MessageList = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            if (!this.props.roomId) {
+                return _react2.default.createElement(
+                    'div',
+                    { className: 'message-list' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'join-room' },
+                        '\u2190 Join a room!'
+                    )
+                );
+            }
             return _react2.default.createElement(
                 'div',
                 { className: 'message-list' },
@@ -1606,6 +1621,7 @@ var SendMessageForm = function (_React$Component) {
                     onSubmit: this.handleSubmit,
                     className: 'send-message-form' },
                 _react2.default.createElement('input', {
+                    disabled: this.props.disabled,
                     onChange: this.handleChange,
                     value: this.state.message,
                     placeholder: 'SendMessageForm',
