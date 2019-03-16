@@ -1306,6 +1306,10 @@ var _Message = __webpack_require__(19);
 
 var _Message2 = _interopRequireDefault(_Message);
 
+var _reactDom = __webpack_require__(17);
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1324,6 +1328,20 @@ var MessageList = function (_React$Component) {
     }
 
     _createClass(MessageList, [{
+        key: 'componentWillUpdate',
+        value: function componentWillUpdate() {
+            var node = _reactDom2.default.findDOMNode(this);
+            this.shouldScrollBottom = node.scrollTop + node.clientHeight >= node.scrollHeight;
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate() {
+            if (this.shouldScrollBottom) {
+                var node = _reactDom2.default.findDOMNode(this);
+                node.scrollTop = node.scrollHeight;
+            }
+        }
+    }, {
         key: 'render',
         value: function render() {
             return _react2.default.createElement(
@@ -1537,7 +1555,6 @@ var SendMessageForm = function (_React$Component) {
         key: 'handleSubmit',
         value: function handleSubmit(e) {
             e.preventDefault();
-            console.log(this.state.message);
             this.props.sendMessage(this.state.message);
             this.setState({
                 message: ''
