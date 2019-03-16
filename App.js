@@ -12,6 +12,7 @@ class App extends React.Component {
     constructor() {
         super()
         this.state = {
+            roomId: null,
             messages: [],
             joinableRooms: [],
             joinedRooms: []
@@ -50,6 +51,9 @@ class App extends React.Component {
     }
     
     subscribeToRoom(roomId) {
+        this.setState({
+            messages:[]
+        })
         this.currentUser.subscribeToRoom({
             roomId: roomId,
             hooks: {
@@ -60,12 +64,19 @@ class App extends React.Component {
                 }
             }
         })
+        .then(room=>{
+            this.setState({
+                roomId:room.id
+            })
+            this.getRooms
+        })
+        .catch(err => console.log('error on subscribing to room: ', err))
     }
     
     sendMessage(text) {
         this.currentUser.sendMessage({
             text,
-            roomId: 9434230
+            roomId: this.state.roomId
         })
     }
     
@@ -73,6 +84,7 @@ class App extends React.Component {
         return (
             <div className="app">
                 <RoomList
+                    roomId={this.state.roomId}
                     subscribeToRoom={this.subscribeToRoom}
                     rooms={[...this.state.joinableRooms, ...this.state.joinedRooms]} />
                 <MessageList messages={this.state.messages} />
