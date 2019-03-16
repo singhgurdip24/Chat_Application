@@ -6,18 +6,18 @@ class RoomList extends React.Component {
             <div className="rooms-list">
                 <ul>
                 <h3>Your rooms:</h3>
-                {  
-                    
+                {   
                     this.props.rooms.map(
-                        rooms=>{
+                        room=>{
                             return(
                                 <li key={rooms.id} className="room">
-                                    <a href="#">#{rooms.name}</a>
+                                    <a 
+                                        onClick={()=>this.props.subscribeToRoom(room.id)}
+                                        href="#">#{rooms.name}</a>
                                 </li>
                             )
                         }
                     )
-                
                 }
                 </ul>
             </div>

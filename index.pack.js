@@ -1076,6 +1076,8 @@ var App = function (_React$Component) {
             joinedRooms: []
         };
         _this.sendMessage = _this.sendMessage.bind(_this);
+        _this.getRooms = _this.getRooms.bind(_this);
+        _this.subscribeToRoom = _this.subscribeToRoom.bind(_this);
         return _this;
     }
 
@@ -1093,23 +1095,37 @@ var App = function (_React$Component) {
             });
             chatManager.connect().then(function (currentUser) {
                 _this2.currentUser = currentUser;
+                _this2.getRooms();
+                // this.subscribeToRoom(19931139);
+            }).catch(function (err) {
+                return console.log('error on connecting: ', errr);
+            });
+        }
+    }, {
+        key: 'subscribeToRoom',
+        value: function subscribeToRoom(roomId) {
+            var _this3 = this;
 
-                _this2.currentUser.getJoinableRooms().then(function (joinableRooms) {
-                    return _this2.setState({
-                        joinableRooms: joinableRooms,
-                        joinedRooms: _this2.currentUser.rooms
-                    });
-                });
-
-                _this2.currentUser.subscribeToRoom({
-                    roomId: 19867586,
-                    hooks: {
-                        onNewMessage: function onNewMessage(message) {
-                            _this2.setState({
-                                messages: [].concat(_toConsumableArray(_this2.state.messages), [message])
-                            });
-                        }
+            this.currentUser.subscribeToRoom({
+                roomId: roomId,
+                hooks: {
+                    onNewMessage: function onNewMessage(message) {
+                        _this3.setState({
+                            messages: [].concat(_toConsumableArray(_this3.state.messages), [message])
+                        });
                     }
+                }
+            });
+        }
+    }, {
+        key: 'getRooms',
+        value: function getRooms() {
+            var _this4 = this;
+
+            this.currentUser.getJoinableRooms().then(function (joinableRooms) {
+                return _this4.setState({
+                    joinableRooms: joinableRooms,
+                    joinedRooms: _this4.currentUser.rooms
                 });
             });
         }
@@ -1127,7 +1143,8 @@ var App = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 { className: 'app' },
-                _react2.default.createElement(_RoomList2.default, { rooms: [].concat(_toConsumableArray(this.state.joinableRooms), _toConsumableArray(this.state.joinedRooms)) }),
+                _react2.default.createElement(_RoomList2.default, { subscribeToRoom: this.subscribeToRoom,
+                    rooms: [].concat(_toConsumableArray(this.state.joinableRooms), _toConsumableArray(this.state.joinedRooms)) }),
                 _react2.default.createElement(_MessageList2.default, { messages: this.state.messages }),
                 _react2.default.createElement(_SendMessageForm2.default, { sendMessage: this.sendMessage }),
                 _react2.default.createElement(_NewRoomForm2.default, null)
@@ -1408,6 +1425,8 @@ var RoomList = function (_React$Component) {
     _createClass(RoomList, [{
         key: "render",
         value: function render() {
+            var _this2 = this;
+
             return _react2.default.createElement(
                 "div",
                 { className: "rooms-list" },
@@ -1419,13 +1438,17 @@ var RoomList = function (_React$Component) {
                         null,
                         "Your rooms:"
                     ),
-                    this.props.rooms.map(function (rooms) {
+                    this.props.rooms.map(function (room) {
                         return _react2.default.createElement(
                             "li",
                             { key: rooms.id, className: "room" },
                             _react2.default.createElement(
                                 "a",
-                                { href: "#" },
+                                {
+                                    onClick: function onClick() {
+                                        return _this2.props.subscribeToRoom(room.id);
+                                    },
+                                    href: "#" },
                                 "#",
                                 rooms.name
                             )

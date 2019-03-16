@@ -15,6 +15,8 @@ class App extends React.Component {
             joinedRooms:[]
         }
         this.sendMessage=this.sendMessage.bind(this)
+        this.getRooms=this.getRooms.bind(this)
+        this.subscribeToRoom=this.subscribeToRoom.bind(this)
     }
 
 
@@ -29,20 +31,15 @@ class App extends React.Component {
         chatManager.connect()
         .then(currentUser => {
             this.currentUser=currentUser
+            this.getRooms();
+            // this.subscribeToRoom(19931139);
+    })
+    .catch(err => console.log('error on connecting: ', errr))
+    }
 
-            this.currentUser.getJoinableRooms()
-            .then(
-                joinableRooms=>
-                this.setState({
-                    joinableRooms,
-                    joinedRooms:this.currentUser.rooms
-                })
-            )
-
-
-
-            this.currentUser.subscribeToRoom({
-            roomId:19867586,
+    subscribeToRoom(roomId){
+        this.currentUser.subscribeToRoom({
+            roomId:roomId,
             hooks:{
                 onNewMessage: message=>{
                     this.setState({
@@ -50,8 +47,18 @@ class App extends React.Component {
                     })
                 }
             }
-        })})
+        })
+    }
 
+    getRooms(){
+        this.currentUser.getJoinableRooms()
+        .then(
+            joinableRooms=>
+            this.setState({
+                joinableRooms,
+                joinedRooms:this.currentUser.rooms
+            })
+        )
     }
 
     sendMessage(text){
@@ -64,7 +71,8 @@ class App extends React.Component {
     render() {
         return (
             <div className="app">
-                <RoomList rooms={[...this.state.joinableRooms, ...this.state.joinedRooms]}/>
+                <RoomList subscribeToRoom={this.subscribeToRoom} 
+                rooms={[...this.state.joinableRooms, ...this.state.joinedRooms]}/>
                 <MessageList messages={this.state.messages}/>
                 <SendMessageForm sendMessage={this.sendMessage}/>
                 <NewRoomForm />
